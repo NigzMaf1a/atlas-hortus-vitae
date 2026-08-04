@@ -35,6 +35,51 @@ func main() {
 	//routes
 	mux.HandleFunc("POST /api/auth/login", handler.Login(db))
 
+	mux.HandleFunc(
+		"POST /api/outlets",
+		handler.CreateOutlet(db),
+	)
+
+	mux.HandleFunc(
+		"GET /api/outlets",
+		handler.ReadOutlets(db),
+	)
+
+	mux.HandleFunc(
+		"GET /api/outlets/{id}",
+		handler.ReadOutlet(db),
+	)
+
+	mux.HandleFunc(
+		"PATCH /api/outlets/{id}/networth",
+		handler.UpdateNetworth(db),
+	)
+
+	mux.HandleFunc(
+		"PATCH /api/outlets/{id}/status",
+		handler.UpdateOutletStatus(db),
+	)
+
+	mux.HandleFunc(
+		"POST /api/payments",
+		handler.CreatePayment(db),
+	)
+
+	mux.HandleFunc(
+		"GET /api/payments",
+		handler.ReadPayments(db),
+	)
+
+	mux.HandleFunc(
+		"GET /api/payments/user/{id}",
+		handler.ReadPaymentsByUser(db),
+	)
+
+	mux.HandleFunc(
+		"PATCH /api/payments/{id}/status",
+		handler.UpdatePaymentStatus(db),
+	)
+
 	mux.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte("Server is running"))

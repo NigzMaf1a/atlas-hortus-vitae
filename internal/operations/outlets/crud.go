@@ -11,25 +11,22 @@ func CreateOutlet(
 	db *sql.DB,
 	query string,
 	o Outlet,
-) error {
+) (Outlet, error) {
+
 	err := db.QueryRowContext(
 		ctx,
 		query,
-		&o.Name,
-		&o.Location,
-		&o.Networth,
-		&o.Networth,
-		&o.Open,
+		o.Name,
+		o.Location,
+		o.Networth,
+		o.Open,
 	).Scan(&o.OutletID)
 
 	if err != nil {
-		fmt.Println("An error occurred while querying the database")
-		return fmt.Errorf("create outlet: %w", err)
+		return o, fmt.Errorf("create outlet: %w", err)
 	}
 
-	fmt.Println("Outlet created successfully")
-
-	return nil
+	return o, nil
 }
 
 func ReadOutlets(
