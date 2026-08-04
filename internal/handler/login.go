@@ -2,17 +2,22 @@ package handler
 
 import (
 	"bytes"
+	"context"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/NigzMaf1a/atlas-hortus-vitae/internal/links"
 	"github.com/NigzMaf1a/atlas-hortus-vitae/internal/operations/auth"
+	"github.com/NigzMaf1a/atlas-hortus-vitae/internal/operations/outlets"
+	"github.com/NigzMaf1a/atlas-hortus-vitae/internal/queries"
 	"github.com/NigzMaf1a/atlas-hortus-vitae/internal/scripts"
 )
 
-func Login() http.HandlerFunc {
+func Login(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
 
@@ -57,6 +62,16 @@ func Login() http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+
+		ctx, cancel := context.WithTimeout(resp.Request.Context(), 5*time.Second)
+		defer cancel()
+
+		outlet, err := outlets.ReadOutlet(
+			ctx,
+			db,
+			queries.OutletQueries.ReadOutlet,
+			creds.OutletID,
+		)
 
 		w.Header().Set("Content-Type", "application/json")
 
