@@ -32,5 +32,5 @@ type HortusLoginResponse struct {
 	Token      string `json:"token"`
 	User       User   `json:"user"`
 	OutletName string `json:"outlet_name"`
-	OutletID   string `json:"outlet_id"`
+	OutletID   int64  `json:"outlet_id"`
 }

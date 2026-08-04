@@ -6,7 +6,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"time"
 
@@ -19,29 +18,43 @@ import (
 
 func Login(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		defer r.Body.Close()
 
+		// Decode credentials
 		creds, err := scripts.DecodeJSON[auth.HortusVirtaeCred](r.Body)
 
 		if err != nil {
-			fmt.Println("An error occurred while decoding login credentials")
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			fmt.Println("Error decoding login credentials:", err)
+
+			http.Error(
+				w,
+				"Invalid login credentials",
+				http.StatusBadRequest,
+			)
+
 			return
 		}
 
-		data := map[string]interface{}{
-			"email":    creds.Email,
-			"password": creds.Password,
+		// Prepare request for Auth Service
+		payload := auth.LoginCred{
+			Email:    creds.Email,
+			Password: creds.Password,
 		}
 
-		jsonData, err := json.Marshal(data)
+		jsonData, err := json.Marshal(payload)
 
 		if err != nil {
-			fmt.Println(err)
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			fmt.Println("Error encoding login request:", err)
+
+			http.Error(
+				w,
+				"Internal server error",
+				http.StatusInternalServerError,
+			)
+
 			return
 		}
 
+		// Call Auth Service
 		resp, err := http.Post(
 			links.AuthLink,
 			"application/json",
@@ -49,23 +62,54 @@ func Login(db *sql.DB) http.HandlerFunc {
 		)
 
 		if err != nil {
-			fmt.Println("Request failed:", err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			fmt.Println("Auth service request failed:", err)
+
+			http.Error(
+				w,
+				"Authentication service unavailable",
+				http.StatusBadGateway,
+			)
+
 			return
 		}
 
 		defer resp.Body.Close()
 
-		body, err := io.ReadAll(resp.Body)
-		if err != nil {
-			fmt.Println(err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+		// Auth service rejected credentials
+		if resp.StatusCode != http.StatusOK {
+			http.Error(
+				w,
+				"Invalid email or password",
+				resp.StatusCode,
+			)
+
 			return
 		}
 
-		ctx, cancel := context.WithTimeout(resp.Request.Context(), 5*time.Second)
+		// Decode Auth Service response
+		var loginResponse auth.LoginResponse
+
+		if err := json.NewDecoder(resp.Body).Decode(&loginResponse); err != nil {
+			fmt.Println("Error decoding auth service response:", err)
+
+			http.Error(
+				w,
+				"Invalid authentication service response",
+				http.StatusBadGateway,
+			)
+
+			return
+		}
+
+		// Create context for outlet lookup
+		ctx, cancel := context.WithTimeout(
+			r.Context(),
+			5*time.Second,
+		)
+
 		defer cancel()
 
+		// Get outlet
 		outlet, err := outlets.ReadOutlet(
 			ctx,
 			db,
@@ -73,10 +117,40 @@ func Login(db *sql.DB) http.HandlerFunc {
 			creds.OutletID,
 		)
 
-		w.Header().Set("Content-Type", "application/json")
+		if err != nil {
+			fmt.Println("Error reading outlet:", err)
 
-		if err := scripts.EncodeJSON(w, body); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			http.Error(
+				w,
+				"Failed to retrieve outlet",
+				http.StatusInternalServerError,
+			)
+
+			return
+		}
+
+		// Build Hortus login response
+		response := auth.HortusLoginResponse{
+			Token:      loginResponse.Token,
+			User:       loginResponse.User,
+			OutletName: outlet.Name,
+			OutletID:   outlet.OutletID,
+		}
+
+		w.Header().Set(
+			"Content-Type",
+			"application/json",
+		)
+
+		if err := scripts.EncodeJSON(w, response); err != nil {
+			fmt.Println("Error encoding login response:", err)
+
+			http.Error(
+				w,
+				"Internal server error",
+				http.StatusInternalServerError,
+			)
+
 			return
 		}
 	}
