@@ -85,6 +85,106 @@ func main() {
 		_, _ = w.Write([]byte("Server is running"))
 	})
 
+	mux.HandleFunc(
+		"POST /api/products",
+		handler.CreateProduct(db),
+	)
+
+	mux.HandleFunc(
+		"GET /api/products",
+		handler.ReadProducts(db),
+	)
+
+	mux.HandleFunc(
+		"GET /api/products/outlet/{id}",
+		handler.ReadProductsByOutlet(db),
+	)
+
+	mux.HandleFunc(
+		"GET /api/products/available/{available}",
+		handler.ReadProductsByAvailable(db),
+	)
+
+	mux.HandleFunc(
+		"PATCH /api/products/{id}/price",
+		handler.UpdateProductPrice(db),
+	)
+
+	mux.HandleFunc(
+		"PATCH /api/products/{id}/available",
+		handler.UpdateProductAvailable(db),
+	)
+
+	mux.HandleFunc(
+		"POST /api/sale-items",
+		handler.CreateSaleItem(db),
+	)
+
+	mux.HandleFunc(
+		"GET /api/sale-items",
+		handler.ReadSaleItems(db),
+	)
+
+	mux.HandleFunc(
+		"GET /api/sale-items/sale/{id}",
+		handler.ReadSaleItemsBySale(db),
+	)
+
+	mux.HandleFunc(
+		"GET /api/sale-items/product/{id}",
+		handler.ReadSaleItemsByProduct(db),
+	)
+
+	mux.HandleFunc(
+		"POST /api/sales",
+		handler.CreateSale(db),
+	)
+
+	mux.HandleFunc(
+		"GET /api/sales",
+		handler.ReadSales(db),
+	)
+
+	mux.HandleFunc(
+		"GET /api/sales/user/{id}",
+		handler.ReadSalesByUser(db),
+	)
+
+	mux.HandleFunc(
+		"GET /api/sales/outlet/{id}",
+		handler.ReadSalesByOutlet(db),
+	)
+
+	mux.HandleFunc(
+		"GET /api/sales/date/{date}",
+		handler.ReadSalesByDate(db),
+	)
+
+	mux.HandleFunc(
+		"POST /api/stock",
+		handler.CreateStock(db),
+	)
+
+	mux.HandleFunc(
+		"GET /api/stock",
+		handler.ReadStock(db),
+	)
+
+	mux.HandleFunc(
+		"GET /api/stock/outlet/{id}",
+		handler.ReadOutletStock(db),
+	)
+
+	mux.HandleFunc(
+		"PATCH /api/stock/{id}/quantity",
+		handler.UpdateStockQty(db),
+	)
+
+	mux.HandleFunc(
+		"PATCH /api/stock/{id}/price",
+		handler.UpdateStockPrice(db),
+	)
+
 	// Server configuration
 	server := &http.Server{
 		Addr:              ":" + getPort(),

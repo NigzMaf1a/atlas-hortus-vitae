@@ -1,6 +1,10 @@
 package sales
 
-import "time"
+import (
+	"time"
+
+	"github.com/NigzMaf1a/atlas-hortus-vitae/internal/operations/saleitem"
+)
 
 type Sale struct {
 	SaleID       int64     `json:"sale_id"`
@@ -10,4 +14,9 @@ type Sale struct {
 	SaleTotal    float64   `json:"sale_total"`
 	SaleDiscount float64   `json:"sale_discount"`
 	SalePrice    float64   `json:"sale_price"`
+}
+
+type CreateSaleRequest struct {
+	Sale  Sale                `json:"sale"`
+	Items []saleitem.SaleItem `json:"items"`
 }
