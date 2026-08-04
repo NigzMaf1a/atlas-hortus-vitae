@@ -17,6 +17,12 @@ type LoginCred struct {
 	Password string `json:"password"`
 }
 
+type HortusVirtaeCred struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+	OutletID int64  `json:"outlet_id"`
+}
+
 type LoginResponse struct {
 	Token string `json:"token"`
 	User  User   `json:"user"`
