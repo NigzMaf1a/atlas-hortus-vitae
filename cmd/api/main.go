@@ -36,12 +36,12 @@ func main() {
 	mux.HandleFunc("POST /api/auth/login", handler.Login(db))
 
 	mux.HandleFunc(
-		"POST /api/outlets",
+		"POST /api/outlets/post",
 		handler.CreateOutlet(db),
 	)
 
 	mux.HandleFunc(
-		"GET /api/outlets",
+		"GET /api/outlets/get",
 		handler.ReadOutlets(db),
 	)
 
@@ -61,12 +61,12 @@ func main() {
 	)
 
 	mux.HandleFunc(
-		"POST /api/payments",
+		"POST /api/payments/post",
 		handler.CreatePayment(db),
 	)
 
 	mux.HandleFunc(
-		"GET /api/payments",
+		"GET /api/payments/get",
 		handler.ReadPayments(db),
 	)
 
@@ -81,17 +81,19 @@ func main() {
 	)
 
 	mux.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte("Server is running"))
+
+		w.Write([]byte(`{"status":"ok"}`))
 	})
 
 	mux.HandleFunc(
-		"POST /api/products",
+		"POST /api/products/post",
 		handler.CreateProduct(db),
 	)
 
 	mux.HandleFunc(
-		"GET /api/products",
+		"GET /api/products/get",
 		handler.ReadProducts(db),
 	)
 
@@ -116,12 +118,12 @@ func main() {
 	)
 
 	mux.HandleFunc(
-		"POST /api/sale-items",
+		"POST /api/sale-items/post",
 		handler.CreateSaleItem(db),
 	)
 
 	mux.HandleFunc(
-		"GET /api/sale-items",
+		"GET /api/sale-items/get",
 		handler.ReadSaleItems(db),
 	)
 
@@ -136,12 +138,12 @@ func main() {
 	)
 
 	mux.HandleFunc(
-		"POST /api/sales",
+		"POST /api/sales/post",
 		handler.CreateSale(db),
 	)
 
 	mux.HandleFunc(
-		"GET /api/sales",
+		"GET /api/sales/get",
 		handler.ReadSales(db),
 	)
 
