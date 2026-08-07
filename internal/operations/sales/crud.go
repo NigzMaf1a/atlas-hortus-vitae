@@ -110,7 +110,7 @@ func ReadSales(
 			&s.UserId,
 			&s.OutletID,
 			&s.SaleDate,
-			&s.SaleTotal,
+			&s.SaleStatus,
 			&s.SaleTotal,
 			&s.SaleDiscount,
 			&s.SalePrice,
