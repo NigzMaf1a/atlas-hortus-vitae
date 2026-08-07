@@ -287,3 +287,41 @@ func ReadSalesByDate(
 
 	return sales, nil
 }
+
+func UpdateSaleStatus(
+	ctx context.Context,
+	db *sql.DB,
+	query string,
+	saleID int64,
+	status string,
+) error {
+
+	result, err := db.ExecContext(
+		ctx,
+		query,
+		status,
+		saleID,
+	)
+
+	if err != nil {
+		return fmt.Errorf("update sale status: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+
+	if err != nil {
+		return fmt.Errorf("get rows affected: %w", err)
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("no sale found with id %d", saleID)
+	}
+
+	fmt.Printf(
+		"Sale %d status updated successfully to %s\n",
+		saleID,
+		status,
+	)
+
+	return nil
+}
