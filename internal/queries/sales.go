@@ -1,17 +1,19 @@
 package queries
 
 var SaleQueries = struct {
-	CreateSale       string
-	ReadSales        string
-	ReadSalesByUser  string
+	CreateSale        string
+	ReadSales         string
+	ReadSalesByUser   string
 	ReadSalesByOutlet string
-	ReadSalesByDate  string
+	ReadSalesByDate   string
+	PatchSaleStatus   string
 }{
 	CreateSale: `
 		INSERT INTO sales (
 			user_id,
 			outlet_id,
 			sale_date,
+			sale_status,
 			sale_total,
 			sale_discount,
 			sale_price
@@ -26,6 +28,7 @@ var SaleQueries = struct {
 			user_id,
 			outlet_id,
 			sale_date,
+			sale_status,
 			sale_total,
 			sale_discount,
 			sale_price
@@ -39,6 +42,7 @@ var SaleQueries = struct {
 			user_id,
 			outlet_id,
 			sale_date,
+			sale_status,
 			sale_total,
 			sale_discount,
 			sale_price
@@ -53,6 +57,7 @@ var SaleQueries = struct {
 			user_id,
 			outlet_id,
 			sale_date,
+			sale_status,
 			sale_total,
 			sale_discount,
 			sale_price
@@ -67,6 +72,7 @@ var SaleQueries = struct {
 			user_id,
 			outlet_id,
 			sale_date,
+			sale_status,
 			sale_total,
 			sale_discount,
 			sale_price
@@ -74,5 +80,11 @@ var SaleQueries = struct {
 		WHERE sale_date >= $1
 		AND sale_date < $1 + INTERVAL '1 day'
 		ORDER BY sale_date DESC
+	`,
+	PatchSaleStatus: `
+		UPDATE sales 
+		SET
+			sale_status = $1
+		WHERE sale_id = $2
 	`,
 }
