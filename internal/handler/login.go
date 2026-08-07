@@ -18,6 +18,7 @@ import (
 
 func Login(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("Login endpoint hit")
 
 		// Decode credentials
 		creds, err := scripts.DecodeJSON[auth.HortusVirtaeCred](r.Body)
@@ -136,6 +137,16 @@ func Login(db *sql.DB) http.HandlerFunc {
 			OutletName: outlet.Name,
 			OutletID:   outlet.OutletID,
 		}
+
+		fmt.Println("========== SUCCESSFUL LOGIN ==========")
+		fmt.Printf("Email: %s\n", creds.Email)
+		fmt.Printf("User ID: %d\n", response.User.UserId)
+		fmt.Printf("Username: %s\n", response.User.UserName)
+		fmt.Printf("Role ID: %d\n", response.User.RoleId)
+		fmt.Printf("Outlet ID: %d\n", response.OutletID)
+		fmt.Printf("Outlet Name: %s\n", response.OutletName)
+		fmt.Printf("Token: %s\n", response.Token)
+		fmt.Println("======================================")
 
 		w.Header().Set(
 			"Content-Type",
