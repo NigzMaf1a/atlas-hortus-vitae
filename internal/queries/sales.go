@@ -18,7 +18,7 @@ var SaleQueries = struct {
 			sale_discount,
 			sale_price
 		)
-		VALUES ($1, $2, $3, $4, $5, $6)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
 		RETURNING sale_id
 	`,
 
@@ -81,10 +81,10 @@ var SaleQueries = struct {
 		AND sale_date < $1 + INTERVAL '1 day'
 		ORDER BY sale_date DESC
 	`,
+
 	PatchSaleStatus: `
-		UPDATE sales 
-		SET
-			sale_status = $1
+		UPDATE sales
+		SET sale_status = $1
 		WHERE sale_id = $2
 	`,
 }
