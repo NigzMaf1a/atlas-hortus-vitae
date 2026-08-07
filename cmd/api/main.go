@@ -163,6 +163,11 @@ func main() {
 	)
 
 	mux.HandleFunc(
+		"PATCH /api/sales/status/{id}",
+		handler.UpdateSaleStatus(db),
+	)
+
+	mux.HandleFunc(
 		"POST /api/stock",
 		handler.CreateStock(db),
 	)
