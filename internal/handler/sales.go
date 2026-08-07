@@ -255,3 +255,61 @@ func ReadSalesByDate(db *sql.DB) http.HandlerFunc {
 		}
 	}
 }
+
+func UpdateSaleStatus(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		saleID, err := scripts.ConvertToInteger(
+			r.PathValue("id"),
+		)
+
+		if err != nil {
+			http.Error(
+				w,
+				err.Error(),
+				http.StatusBadRequest,
+			)
+			return
+		}
+
+		defer r.Body.Close()
+
+		request, err := scripts.DecodeJSON[sales.UpdateSaleStatusRequest](
+			r.Body,
+		)
+
+		if err != nil {
+			http.Error(
+				w,
+				err.Error(),
+				http.StatusBadRequest,
+			)
+			return
+		}
+
+		ctx, cancel := context.WithTimeout(
+			r.Context(),
+			5*time.Second,
+		)
+		defer cancel()
+
+		err = sales.UpdateSaleStatus(
+			ctx,
+			db,
+			queries.SaleQueries.PatchSaleStatus,
+			saleID,
+			request.SaleStatus,
+		)
+
+		if err != nil {
+			http.Error(
+				w,
+				err.Error(),
+				http.StatusInternalServerError,
+			)
+			return
+		}
+
+		w.WriteHeader(http.StatusNoContent)
+	}
+}

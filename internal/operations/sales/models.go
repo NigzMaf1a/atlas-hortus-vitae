@@ -21,3 +21,7 @@ type CreateSaleRequest struct {
 	Sale  Sale                `json:"sale"`
 	Items []saleitem.SaleItem `json:"items"`
 }
+
+type UpdateSaleStatusRequest struct {
+	SaleStatus string `json:"sale_status"`
+}
