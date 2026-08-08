@@ -1,13 +1,13 @@
 package queries
 
 var WorkerQueries = struct {
-	CreateWorker           string
-	GetWorkers             string
-	GetWorkersByOutlet     string
-	SignInWorker            string
-	UpdateShiftTime        string
-	UpdateSignInLocation   string
-	UpdateOutletID         string
+	CreateWorker         string
+	GetWorkers           string
+	GetWorkersByOutlet   string
+	SignInWorker         string
+	UpdateShiftTime      string
+	UpdateSignInLocation string
+	UpdateOutletID       string
 }{
 	CreateWorker: `
 		INSERT INTO workers (
