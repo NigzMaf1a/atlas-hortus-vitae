@@ -24,6 +24,11 @@ func CreateWorker(
 		w.SignInLocation,
 	).Scan(
 		&w.UserId,
+		&w.OutletID,
+		&w.WorkerPresent,
+		&w.SignInTime,
+		&w.ShiftTime,
+		&w.SignInLocation,
 	)
 
 	if err != nil {
@@ -157,9 +162,7 @@ func SignInWorker(
 	}
 
 	if affected == 0 {
-		return fmt.Errorf(
-			"worker cannot sign in: shift is more than 5 minutes away, worker is already present, or worker does not exist",
-		)
+		return sql.ErrNoRows
 	}
 
 	fmt.Println("Worker signed in successfully")

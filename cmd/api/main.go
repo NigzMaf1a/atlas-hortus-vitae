@@ -192,6 +192,35 @@ func main() {
 		handler.UpdateStockPrice(db),
 	)
 
+	mux.HandleFunc("POST /api/workers/post", handler.CreateWorker(db))
+
+	mux.HandleFunc("GET /api/workers/get", handler.GetWorkers(db))
+
+	mux.HandleFunc(
+		"GET /api/workers/outlet/{id}",
+		handler.GetWorkersByOutlet(db),
+	)
+
+	mux.HandleFunc(
+		"POST /api/workers/signin/{id}",
+		handler.SignInWorker(db),
+	)
+
+	mux.HandleFunc(
+		"PATCH /api/workers/shift/{id}",
+		handler.UpdateShiftTime(db),
+	)
+
+	mux.HandleFunc(
+		"PATCH /api/workers/location/{id}",
+		handler.UpdateSignInLocation(db),
+	)
+
+	mux.HandleFunc(
+		"PATCH /api/workers/outlet/{id}",
+		handler.UpdateOutletID(db),
+	)
+
 	// Server configuration
 	server := &http.Server{
 		Addr:              ":" + getPort(),
